@@ -9,9 +9,8 @@ namespace SecondLaba
             string text = Console.ReadLine();
             string pattern = Console.ReadLine();
 
-
-
             Console.WriteLine(levenshtein(text, pattern));
+            Console.ReadKey(true);
         }
 
 
