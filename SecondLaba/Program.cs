@@ -28,6 +28,9 @@ namespace SecondLaba
         //Метод Вагнера-Фишера
         static int MethodWF(string s1, string s2, int InsertCost = 1, int DeleteCost = 1, int ReplaceCost = 1)
         {
+            s1= s1.ToUpper();
+            s2= s2.ToUpper();
+            
             if (string.IsNullOrEmpty(s1))
             {
                 return (!string.IsNullOrEmpty(s2)) ? s2.Length : 0;
