@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SecondLaba
@@ -7,30 +9,51 @@ namespace SecondLaba
     {
         static object locker = new object();
         static Random random = new Random();
+        static Dictionary<int, string> Results = new Dictionary<int, string>();
 
         static void Main(string[] args)
         {
             //string text = Console.ReadLine();
             //Console.WriteLine(levenshtein(text, pattern));
 
-            string text = new string(GenerationString(8, 12));
+            string text = new string(GenerationString(15000, 16000));
+            text = Regex.Replace(text, @"\s+", " ");
+            string[] words = text.Split(new char[] { ' ' });
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(text);
+            Console.ResetColor();
+
+            Console.Write("Введите стоимость добавления: ");
+            int insertCost = int.Parse(Console.ReadLine());
+            Console.Write("Введите стоимость удаления: ");
+            int deleteCost = int.Parse(Console.ReadLine());
+            Console.Write("Введите стоимость замены: ");
+            int replaceCost = int.Parse(Console.ReadLine());
+            Console.Write("Введите k возможных различий: ");
+            int k = int.Parse(Console.ReadLine());
+
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write("Введите искомое словосочетание: ");
             string pattern = Console.ReadLine();
 
-            Console.WriteLine(MethodWF(text, pattern,1,1,2));
+            Console.ResetColor();
+            Console.Write("Совпадения: ");
+            foreach (var item in words)
+            {
+                int length = MethodWF(item, pattern, insertCost, deleteCost, replaceCost);
+                if (length <= k) Results.Add(length, item);
+            }
+
             Console.ReadKey();
         }
 
         //Метод Вагнера-Фишера
         static int MethodWF(string s1, string s2, int InsertCost = 1, int DeleteCost = 1, int ReplaceCost = 1)
         {
-            s1= s1.ToUpper();
-            s2= s2.ToUpper();
-            
+            s1 = s1.ToUpper();
+            s2 = s2.ToUpper();
+
             if (string.IsNullOrEmpty(s1))
             {
                 return (!string.IsNullOrEmpty(s2)) ? s2.Length : 0;
@@ -48,19 +71,15 @@ namespace SecondLaba
             {
                 D[i, 0] = D[i - 1, 0] + DeleteCost;
             }
-            Console.WriteLine();
-
             for (int j = 1; j <= N; j++)
             {
                 D[0, j] = D[0, j - 1] + InsertCost;
             }
-            Console.WriteLine();
-
             for (int i = 1; i <= M; i++)
             {
                 for (int j = 1; j <= N; j++)
                 {
-                    if (s1[i-1] != s2[j-1])
+                    if (s1[i - 1] != s2[j - 1])
                         D[i, j] = Math.Min(Math.Min(D[i - 1, j] + DeleteCost, D[i, j - 1] + InsertCost), D[i - 1, j - 1] + ReplaceCost);
                     else
                         D[i, j] = D[i - 1, j - 1];
@@ -96,7 +115,7 @@ namespace SecondLaba
             }
             return text;
         }
-        #region
+        #region Левенштейн
         static int levenshtein(string s1, string s2)
         {
             if (string.IsNullOrEmpty(s1))
