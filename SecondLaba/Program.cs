@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -9,42 +10,62 @@ namespace SecondLaba
     {
         static object locker = new object();
         static Random random = new Random();
-        static Dictionary<int, string> Results = new Dictionary<int, string>();
+        static List<(int, string)> Results = new List<(int, string)>();
 
         static void Main(string[] args)
         {
             //string text = Console.ReadLine();
             //Console.WriteLine(levenshtein(text, pattern));
-
-            string text = new string(GenerationString(15000, 16000));
-            text = Regex.Replace(text, @"\s+", " ");
-            string[] words = text.Split(new char[] { ' ' });
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(text);
-            Console.ResetColor();
-
-            Console.Write("Введите стоимость добавления: ");
-            int insertCost = int.Parse(Console.ReadLine());
-            Console.Write("Введите стоимость удаления: ");
-            int deleteCost = int.Parse(Console.ReadLine());
-            Console.Write("Введите стоимость замены: ");
-            int replaceCost = int.Parse(Console.ReadLine());
-            Console.Write("Введите k возможных различий: ");
-            int k = int.Parse(Console.ReadLine());
-
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write("Введите искомое словосочетание: ");
-            string pattern = Console.ReadLine();
-
-            Console.ResetColor();
-            Console.Write("Совпадения: ");
-            foreach (var item in words)
+            try
             {
-                int length = MethodWF(item, pattern, insertCost, deleteCost, replaceCost);
-                if (length <= k) Results.Add(length, item);
-            }
+                List<string> words = new List<string>();
+                for (int i = 0; i < 10; i++)
+                {
+                    words.Add(new string(GenerationString(10, 15)));
+                }
 
+                Console.ForegroundColor = ConsoleColor.Green;
+                foreach (var item in words)
+                {
+                    Console.WriteLine($"{words.IndexOf(item) + 1} ==> {item}");
+                }
+                Console.ResetColor();
+
+                Console.Write("Введите стоимость добавления: ");
+                int insertCost = int.Parse(Console.ReadLine());
+                Console.Write("Введите стоимость удаления: ");
+                int deleteCost = int.Parse(Console.ReadLine());
+                Console.Write("Введите стоимость замены: ");
+                int replaceCost = int.Parse(Console.ReadLine());
+                Console.Write("Введите k возможных различий: ");
+                int k = int.Parse(Console.ReadLine());
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("Введите искомое словосочетание: ");
+                string pattern = Console.ReadLine();
+
+                Console.ResetColor();
+                Console.Write("Совпадения:\n");
+                foreach (var item in words)
+                {
+                    int length = MethodWF(item, pattern, insertCost, deleteCost, replaceCost);
+                    if (length <= k)
+                        Results.Add((length, item));
+                }
+
+                foreach (var searchString in Results.OrderBy(x => x.Item1))
+                {
+                    Console.WriteLine($"{searchString.Item1} --> {searchString.Item2}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                System.Console.WriteLine(ex.Message);
+                Console.ForegroundColor = ConsoleColor.Red;
+                System.Console.WriteLine(ex);
+                Console.ResetColor();
+            }
             Console.ReadKey();
         }
 
@@ -88,7 +109,7 @@ namespace SecondLaba
             return D[M, N];
         }
 
-        static char[] GenerationString(int n, int m, char[] text = default, string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
+        static char[] GenerationString(int n, int m, char[] text = default, string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
         {
             if (alphabet == null)
             {
