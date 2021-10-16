@@ -10,7 +10,7 @@ namespace SecondLaba
     {
         static object locker = new object();
         static Random random = new Random();
-        static List<(int, string,int)> Results = new List<(int, string,int)>();
+        static List<(int, string, int)> Results = new List<(int, string, int)>();
 
         static void Main(string[] args)
         {
@@ -50,7 +50,7 @@ namespace SecondLaba
                 {
                     int length = MethodWF(item, pattern, insertCost, deleteCost, replaceCost);
                     if (length <= k)
-                        Results.Add((length, item,words.IndexOf(item)));
+                        Results.Add((length, item, words.IndexOf(item) + 1));
                 }
                 foreach (var searchString in Results.OrderBy(x => x.Item1))
                 {
@@ -135,46 +135,5 @@ namespace SecondLaba
             }
             return text;
         }
-        #region Левенштейн
-        static int levenshtein(string s1, string s2)
-        {
-            if (string.IsNullOrEmpty(s1))
-            {
-                return (!string.IsNullOrEmpty(s2)) ? s2.Length : 0;
-            }
-            if (string.IsNullOrEmpty(s2))
-            {
-                return (!string.IsNullOrEmpty(s1)) ? s1.Length : 0;
-            }
-
-            int[,] D = new int[s1.Length + 1, s2.Length + 1];
-            int cost, min1, min2, min3;
-
-            int N = D.GetUpperBound(0);
-            int M = D.GetUpperBound(1);
-
-            for (int i = 0; i <= N; i++)
-            {
-                D[i, 0] = i;
-            }
-            for (int i = 0; i <= M; i++)
-            {
-                D[0, i] = i;
-            }
-            for (int i = 1; i <= N; i++)
-            {
-                for (int j = 1; j <= M; j++)
-                {
-                    cost = Convert.ToInt32((s1[i - 1] != s2[j - 1]));
-
-                    min1 = D[i - 1, j] + 1;
-                    min2 = D[i, j - 1] + 1;
-                    min3 = D[i - 1, j - 1] + cost;
-                    D[i, j] = Math.Min(Math.Min(min1, min2), min3);
-                }
-            }
-            return D[N, M];
-        }
-        #endregion
     }
 }
