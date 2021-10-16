@@ -10,7 +10,7 @@ namespace SecondLaba
     {
         static object locker = new object();
         static Random random = new Random();
-        static List<(int, string)> Results = new List<(int, string)>();
+        static List<(int, string,int)> Results = new List<(int, string,int)>();
 
         static void Main(string[] args)
         {
@@ -19,15 +19,15 @@ namespace SecondLaba
             try
             {
                 List<string> words = new List<string>();
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 100; i++)
                 {
-                    words.Add(new string(GenerationString(10, 15)));
+                    words.Add(new string(GenerationString(10, 20, null, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")));
                 }
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 foreach (var item in words)
                 {
-                    Console.WriteLine($"{words.IndexOf(item) + 1} ==> {item}");
+                    Console.WriteLine($" {words.IndexOf(item) + 1} ==> {item}");
                 }
                 Console.ResetColor();
 
@@ -50,12 +50,11 @@ namespace SecondLaba
                 {
                     int length = MethodWF(item, pattern, insertCost, deleteCost, replaceCost);
                     if (length <= k)
-                        Results.Add((length, item));
+                        Results.Add((length, item,words.IndexOf(item)));
                 }
-
                 foreach (var searchString in Results.OrderBy(x => x.Item1))
                 {
-                    Console.WriteLine($"{searchString.Item1} --> {searchString.Item2}");
+                    Console.WriteLine($" {searchString.Item3} ==> {searchString.Item2} ({searchString.Item1})");
                 }
             }
             catch (Exception ex)
